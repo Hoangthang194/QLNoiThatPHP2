@@ -88,5 +88,6 @@ class Getdata{
         $message = new Message();
         return  $message->getmsgWithRole($FromID, $ToID);
     }
+
 }
  ?>

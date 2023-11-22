@@ -14,13 +14,19 @@ session_start();
         }
         $MessageDetails = $_POST["message"];
         $message = new Message();
+        if($MessageDetails != ""){
         $message->InsertMsg($FromID, $MessageDetails, $ToID);
+        }
         if (!isset($_FILES["images"])) {
             echo '<script type="text/javascript">location.href = "../view/chat.php?id='.$_SESSION["idSubmit"].'"</script>';
             return;
         }
-        if($_FILES["images"]["name"][0] == ""){
-            echo '<script type="text/javascript">location.href = "../view/chatClient.php"</script>';
+        if($_FILES["images"]["name"][0] == "" && $FromID!=3){
+            echo '<script type="text/javascript">location.href = "../view/chatClient.php?"</script>';
+            return;
+        }
+        else{
+            echo '<script type="text/javascript">location.href = "../view/chat.php?id='.$_SESSION["idSubmit"].'"</script>';
             return;
         }
         
@@ -45,6 +51,6 @@ foreach ($_FILES["images"]["tmp_name"] as $key => $tmp_name) {
         echo '<script type="text/javascript">location.href = "../view/chatClient.php"</script>';
         }
         else {
-        echo '<script type="text/javascript">location.href = "../view/chat.php"</script>';
+        echo '<script type="text/javascript">location.href = "../view/chat.php?id='.$_SESSION["idSubmit"].'"</script>';
         }
  ?>

@@ -17,6 +17,8 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
   <!-- Font Awesome -->
   <link rel="stylesheet" href="../../admin/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
   <link rel="stylesheet" href="../../access/css/style.css">
 
   <!-- Ionicons -->
@@ -360,8 +362,8 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
                   echo '
                   <div class="message text-only">
                   <div class="response">';
-                  if($trimmedMessage == "png"){
-                    echo '<img src="../../access/img2'.$message.'" alt="" class="img">
+                  if($trimmedMessage == "png" || $trimmedMessage == "jpg"){
+                    echo '<img src="../../access/img2/'.$message.'" alt="" class="img" width="460" height = "350">
                     <p class="time">'.$result["createDate"].'</p>
                     ';
                     
@@ -384,9 +386,11 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
         </div>
         <?php
         echo '
-        <form action="../controller/insertMsg.php?id='.$_SESSION["idSubmit"].'" method="post">
+        <form action="../controller/insertMsg.php?id='.$_SESSION["idSubmit"].'" method="post" enctype="multipart/form-data">
         <div class="footer-chat">
-        <i class="fa-solid fa-image" style="padding-left: 20px;font-size: 20px;"></i>
+        <i class="fa-solid fa-image icon-image" style="padding-left: 20px;font-size: 20px;"></i>
+        <div class="file-value" id="fileValue" style="position: fixed; top:80%;"></div>
+        <input type="file" class=" input-image visually-hidden" name="images[]" multiple style="position: absolute; bottom:50px;" id="fileInput">
           <input type="text" class="write-message" placeholder="Type your message here" style=" width:85%" name="message"></input>
           <button type="submit" style="right: 70px; position: absolute; border: none; padding: 10px;">
           <i class="fa-solid fa-paper-plane"></i>
@@ -412,6 +416,24 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
 </div>
 <!-- ./wrapper -->
 <script>
+  var slide=  document.getElementById('fileValue');
+    document.getElementById('fileInput').addEventListener('change', function() {
+    var files = this.files;
+    var fileNames = [];
+
+    for (var i = 0; i < files.length; i++) {
+      let img = document.createElement('img');
+      
+      img.src = `${URL.createObjectURL(files[i])}`;
+      img.style.width = '100px';
+      
+      slide.appendChild(img);
+    }
+  })
+
+  document.querySelector(".icon-image").onclick = function(){
+      document.querySelector(".input-image").click();
+    }
   function changeMessage(e){
     
     let value = e.getAttribute("value");

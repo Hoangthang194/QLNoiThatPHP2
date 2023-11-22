@@ -71,12 +71,24 @@ require_once "../controller/getData.php";
             else{
               echo '
               <li class="other">
-              <div class="avatar"><i class="fa-solid fa-user-tie icon"></i></div>
+              <div class="avatar"><i class="fa-solid fa-user icon"></i></div>
             <div class="msg">
+              ';
+              if($trimmedMessage == "png" || $trimmedMessage == "jpg"){
+                echo'
+                <img src="../../access/img2/'.$message.'" draggable="false"/>
+                <time>'.$result['createDate'].'</time>
+                ';
+              }
+              else{
+                echo'
               <p>'.$message.'</p>
-              <time>'.$result['createDate'].'</time>
+              <time>'.$result['createDate'].'</time>';
+              }
+              
+              echo'
             </div>
-          </li>
+            </li>
               ';
             }
           }
