@@ -48,7 +48,7 @@ const description = {
                 homeProduct.products.map(function(product){
                     if(product.productId == closest.getAttribute('value')){
                         activeDes.classList.add("active")
-                        
+                        console.log(product);
                             if(product.img[0].ProductID == product.productId){
                                 var htmls1 = `
                                 <div class="slider-main">

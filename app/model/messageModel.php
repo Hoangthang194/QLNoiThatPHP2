@@ -17,12 +17,24 @@ class Message{
     public function InsertMsg($FromID, $MessageDetails, $ToID){
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $gioHienTai = date("H:i");
-        $data= array(
-            "FromID" => $FromID,
-            "MessageDetails" => $MessageDetails,
-            "ToID" => $ToID,
-            "createDate" => $gioHienTai
-        );
+        if($FromID !=3){
+            $data= array(
+                "FromID" => $FromID,
+                "MessageDetails" => $MessageDetails,
+                "ToID" => $ToID,
+                "createDate" => $gioHienTai,
+                "IsSeen" => "N"
+            );
+        }
+        else{
+            $data= array(
+                "FromID" => $FromID,
+                "MessageDetails" => $MessageDetails,
+                "ToID" => $ToID,
+                "createDate" => $gioHienTai,
+                "IsSeen" => "Y"
+            );
+        }
         $this->database->insert($this->tablename, $data);
     }
 
@@ -39,6 +51,13 @@ class Message{
     public function getmsgWithRole($FromID, $ToID){
         $result = $this->database->getmsg($FromID, $ToID);
         return $result;
+    }
+
+    public function changeSeen($userID){
+        $data = array(
+            "IsSeen" => "Y"
+        );
+        $this->database->update("message", $data, $userID, "FromID");
     }
 }
  ?>

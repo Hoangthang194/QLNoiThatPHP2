@@ -1,6 +1,7 @@
 <?php
 session_start(); 
 require_once "../controller/getData.php";
+require_once "../controller/changeSeen.php";
 if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
 ?>
 
@@ -64,7 +65,22 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
+          <?php
+              $value = isset($_GET['id']) ? $_GET['id'] : '';
+              $getData = new Getdata();
+               $lstmsg = $getData->getMessage();
+               $countMsgNotSeen = 0;
+               foreach($lstmsg as $msg){
+                  if($msg["IsSeen"] == "N"){
+                    $countMsgNotSeen++;
+                  }
+               }
+               if($countMsgNotSeen > 0){
+                echo '
+                <span class="badge badge-danger navbar-badge">'.$countMsgNotSeen.'</span>
+               ';
+               }
+           ?>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <a href="#" class="dropdown-item">
@@ -191,11 +207,20 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
             </ul>
           </li>
           <li class="nav-item">
-            <a href="./message.php" class="nav-link active">
+          <?php
+            echo '
+            <a href="./chat.php?id='.$_SESSION['idSubmit'].'" class="nav-link active">
+            
+            '
+             ?>
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Hộp thư
-                <span class="right badge badge-danger">New</span>
+                <?php
+                 if($countMsgNotSeen>0){
+                  echo '<span class="right badge badge-danger">New</span>';
+                 }
+                 ?>
               </p>
             </a>
           </li>
@@ -222,16 +247,25 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
           </div>
         </div>
         <?php
+        
           $getData = new Getdata();
           $results = $getData->getMessage();
           $userlst = $getData->GetUserAll();
+          foreach($userlst as $user){
+            if($user["role"] == "user"){
+            $_SESSION["idSubmit"] = $user["UserID"];
+            break;
+            }
+          }
+          
           foreach($userlst as $user){
             $messagelst = $getData->getMessageByID($user["UserID"]);
             $last = end($messagelst);
             $role = $user["role"];
             if($role == "user" && $last!= false){
-              echo '
-              <div class="discussion" value="'.$user["UserID"].'">
+              if($user["UserID"] == $value){
+                echo '
+              <div class="discussion message-active" value="'.$user["UserID"].'" onclick="changeMessage(this)">
               <div class="photo">
               <i class="fa-solid fa-user icon"></i>
               </div>
@@ -242,7 +276,19 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
               <div class="timer">'.$last["createDate"].'</div>
             </div>
               ';
-            
+              }
+              else echo '
+              <div class="discussion" value="'.$user["UserID"].'" onclick="changeMessage(this)">
+              <div class="photo">
+              <i class="fa-solid fa-user icon"></i>
+              </div>
+              <div class="desc-contact">
+                <p class="name">'.$user["Email"].'</p>
+                <p class="message">'.$last["MessageDetails"].'</p>
+              </div>
+              <div class="timer">'.$last["createDate"].'</div>
+            </div>
+              ';
             }
           }
           
@@ -253,11 +299,14 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
         <?php
           $userlst = $getData->GetUserAll();
           $msglst = $getData->getMessage();
-          foreach($userlst as $user){
-            $result = $getData->getMessageByID($user["UserID"]);
-            if($result == false){
-              continue;
-            }
+          // foreach($userlst as $user){
+            // $result = $getData->getMessageByID($user["UserID"]);
+            // if($result == false){
+            //   continue;
+            // }
+            $result = $getData->getUserByID($value);
+            $user = $result[0];
+
             if($user["role"]== "user"){
               echo '<div class="header-chat" value="'.$user["UserID"].'">
               <div class = "photo">
@@ -267,8 +316,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
               <i class="icon clickable fa fa-ellipsis-h right" aria-hidden="true"></i>
             </div>';
             $_SESSION["idSubmit"] = $user["UserID"];
-            break;
-            };
+            // };
           }
 
 
@@ -363,7 +411,13 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] == "admin") {
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
-
+<script>
+  function changeMessage(e){
+    
+    let value = e.getAttribute("value");
+    location.href = './chat.php?id=' + encodeURIComponent(value);
+  }
+</script>
 <!-- jQuery -->
 <script src="../../admin/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->

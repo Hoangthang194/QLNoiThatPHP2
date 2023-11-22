@@ -67,12 +67,13 @@
 }
 .discussions .search .searchbar input *:-ms-input-placeholder {
     color: #E0E0E0;
+    
 }
 
 .discussions .message-active {
   width: 98.5%;
   height: 90px;
-  background-color: #FFF;
+  background-color: #afafaf;
   border-bottom: solid 1px #E0E0E0;
 }
 

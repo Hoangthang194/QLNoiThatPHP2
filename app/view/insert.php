@@ -1,5 +1,6 @@
 <?php
 require_once "../controller/getData.php";
+session_start();
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,59 +60,53 @@ require_once "../controller/getData.php";
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
+          <?php
+              $value = isset($_GET['id']) ? $_GET['id'] : '';
+              $getData = new Getdata();
+               $lstmsg = $getData->getMessage();
+               $countMsgNotSeen = 0;
+               foreach($lstmsg as $msg){
+                  if($msg["IsSeen"] == "N"){
+                    $countMsgNotSeen++;
+                  }
+               }
+               if($countMsgNotSeen > 0){
+                echo '
+                <span class="badge badge-danger navbar-badge">'.$countMsgNotSeen.'</span>
+               ';
+               }
+           ?>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" class="dropdown-item">
+       
+          <?php
+          $messages = $getData->getMessage();
+          foreach($messages as $msg){
+            if($msg["IsSeen"] == "N" ){
+              $user = $getData->getUserByID($msg["FromID"]);
+              echo '
+              <div class="dropdown-divider"></div>
+              <a href="../view/chat.php?id='.$user[0]["UserID"].'" class="dropdown-item">
             <!-- Message Start -->
             <div class="media">
-              <img src="../../admin/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
+            <div class="photo" style="width:40px; height:40px; border-radius:100%; background-color:#ccc; display:flex; justify-content: center;
+            align-items: center; margin-right:10px;">
+            <i class="fa-solid fa-user icon"></i>
             </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="../../admin/dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
               <div class="media-body">
                 <h3 class="dropdown-item-title">
-                  John Pierce
+                  '.$user[0]["Email"].'
                   <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
                 </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                <p class="text-sm">'.$msg["MessageDetails"].'</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>'.$msg["createDate"].'</p>
               </div>
             </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="../../admin/dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-        </div>
+              ';
+            }
+          }
+           ?>
+          <a href="../view/chat.php" class="dropdown-item dropdown-footer">See All Messages</a>
       </li>
       <!-- Notifications Dropdown Menu -->
       
@@ -187,11 +182,20 @@ require_once "../controller/getData.php";
             </ul>
           </li>
           <li class="nav-item">
-            <a href="./chat.php" class="nav-link">
+          <?php
+            echo '
+            <a href="./chat.php?id='.$_SESSION['idSubmit'].'" class="nav-link">
+            
+            '
+             ?>
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Hộp thư
-                <span class="right badge badge-danger">New</span>
+                <?php
+                 if($countMsgNotSeen>0){
+                  echo '<span class="right badge badge-danger">New</span>';
+                 }
+                 ?>
               </p>
             </a>
           </li>
@@ -236,7 +240,7 @@ require_once "../controller/getData.php";
 <div class="row gx-5">
     <div class="col">
     <label for="materialproduct" class="form-label">Loại sản phẩm</label>
-      <select class="form-select" aria-label=".form-select-lg example" name="TypeProduct" id="TypeProduct">
+      <select class="form-select" aria-label=".form-select-lg example" name="TypeProduct" id="TypeProduct" required>
         <option selected>Loại sản phẩm</option>
         <option value="1">Sofa and Armchair</option>
         <option value="2">Bàn</option>
@@ -246,7 +250,7 @@ require_once "../controller/getData.php";
     </div>
     <div class="col">
     <label for="materialproduct" class="form-label">Loại phòng</label>
-    <select class="form-select" aria-label=".form-select-lg example" name="TypeRoom" id="TypeRoom">
+    <select class="form-select" aria-label=".form-select-lg example" name="TypeRoom" id="TypeRoom" required>
         <option selected>Loại phòng</option>
         <option value="1">Phòng ăn</option>
         <option value="2">Phòng ngủ</option>

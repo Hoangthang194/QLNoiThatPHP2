@@ -89,8 +89,9 @@ require_once "../controller/getData.php";
     </ol>
     <i class="fa-solid fa-camera" style="position:fixed; font-size: 20px; z-index: 1000; bottom: 15px; left:15px" onclick="startCamera()" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></i>
     <i class="fa-solid fa-image icon-image" style="position:fixed; font-size: 20px; z-index: 1000; bottom: 15px; left:50px"></i>
+    <div class="file-value" id="fileValue" style="position: fixed; top:80%;"></div>
     <form action="../controller/insertMsg.php" method="post" enctype="multipart/form-data">
-    <input type="file" class="visually-hidden input-image" name="images[]" multiple>
+    <input type="file" class=" input-image visually-hidden" name="images[]" multiple style="position: absolute; bottom:50px;" id="fileInput">
     <input class="textarea" type="text" placeholder="Type here!" style="padding-left: 80px;" name="message"/>
     <button type="submit" style="position: fixed; right:15px; z-index:1000; bottom:10px;font-size: 20px; border: none;">
     <i class="fa-solid fa-paper-plane clickable icon send" ></i>
@@ -118,8 +119,26 @@ require_once "../controller/getData.php";
       </div>
     </div>
   </div>
+  <link rel="stylesheet" href="">
 </div>
   <script>
+    var slide=  document.getElementById('fileValue');
+    document.getElementById('fileInput').addEventListener('change', function() {
+    var files = this.files;
+    var fileNames = [];
+
+    for (var i = 0; i < files.length; i++) {
+      let img = document.createElement('img');
+      
+      img.src = `${URL.createObjectURL(files[i])}`;
+      img.style.width = '100px';
+      
+      slide.appendChild(img);
+    }
+  })
+
+    // Hiển thị giá trị đã chọn
+
     let stream;
     async function startCamera() {
         try {
@@ -189,7 +208,6 @@ require_once "../controller/getData.php";
         }
         }
     }
-
     document.querySelector(".icon-image").onclick = function(){
       document.querySelector(".input-image").click();
     }
